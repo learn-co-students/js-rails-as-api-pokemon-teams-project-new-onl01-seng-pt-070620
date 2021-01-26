@@ -29,20 +29,20 @@ async function loadPokemons() {
 
                 let ul = document.createElement('ul')
                 let pokemons = trainer.pokemons
-                pokemons.forEach(renderPokemons);
-                function renderPokemons(nickname, species) {
+                pokemons.forEach(pokemon => renderPokemons(pokemon));
+                function renderPokemons(pokemon) {
                     let li = document.createElement('li');
-                    li.innerText = pokemons.nickname + pokemons.species
+                    li.innerText = pokemon.species + "->" + pokemon.nickname
 
                     let releaseBtn = document.createElement('button')
                     releaseBtn.setAttribute('class', "release")
-                    releaseBtn.setAttribute("data-pokemon-id", pokemons.id)
+                    releaseBtn.setAttribute("data-pokemon-id", pokemon.id)
                     releaseBtn.innerText = "Release"
                     releaseBtn.addEventListener("click", (event))
+                    li.appendChild(releaseBtn)
 
-                    ul.appendChild(li, releaseBtn)
+                    ul.appendChild(li)
                 }
-
                 div.append(p, btn, ul)
 
                 trainerContainer.appendChild(div);
