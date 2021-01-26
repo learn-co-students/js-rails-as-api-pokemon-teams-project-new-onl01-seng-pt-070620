@@ -25,7 +25,7 @@ async function loadPokemons() {
                 let btn = document.createElement('button')
                 btn.setAttribute("data-trainer-id", trainer.id)
                 btn.innerText = "Add Pokemon"
-                btn.addEventListener("click", (event))
+                btn.addEventListener("click", addPokemon(event))
 
                 let ul = document.createElement('ul')
                 let pokemons = trainer.pokemons
@@ -48,5 +48,19 @@ async function loadPokemons() {
                 trainerContainer.appendChild(div);
             })
         })
+}
+
+async function addPokemon(event) {
+    const postPokemon = await fetch('http://localhost:3000/trainers/', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( {"trainer_id": trainer.id} )
+    });
+    const content = await postPokemon.json();
+
+    console.log(content);
 }
 
