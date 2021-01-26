@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const trainerContainer = document.querySelector(".card")
+const pokemonCard = document.querySelector(".card li")
 
 async function loadPokemons() {
     fetch(TRAINERS_URL)
@@ -25,7 +26,7 @@ async function loadPokemons() {
                 let btn = document.createElement('button')
                 btn.setAttribute("data-trainer-id", trainer.id)
                 btn.innerText = "Add Pokemon"
-                btn.addEventListener("click", addPokemon(event))
+                btn.addEventListener("click", postPokemon)
 
                 let ul = document.createElement('ul')
                 let pokemons = trainer.pokemons
@@ -50,17 +51,62 @@ async function loadPokemons() {
         })
 }
 
-async function addPokemon(event) {
-    const postPokemon = await fetch('http://localhost:3000/trainers/', {
+async function postPokemon(pokemonObj) {
+    fetch(POKEMONS_URL, {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
-        body: JSON.stringify( {"trainer_id": trainer.id} )
+        body: JSON.stringify({
+            "id": pokemonObj.id,
+            "trainer_id": pokemonObj.trainer_id,
+            "species": pokemonObj.species,
+            "nickename": pokemonObj.nickname
+        })
+    })
+    .then(response => response.json())
+    .then((newPokemonObj) => {
+        let newPokemon = renderPokemons(newPokemonObj)
+        pokemonCard.append(newPokemon)
+    })
+    .catch((error) => {
+        alert(error.message);
     });
-    const content = await postPokemon.json();
-
-    console.log(content);
 }
+
+async function renderPokemons(pokemon) {
+        let div = document.createElement('div');
+        div.setAttribute('class', 'card');
+        div.setAttribute('data-id', trainer.id)
+        
+        let p = document.createElement('p');
+        p.innerText = trainer.name
+
+        let btn = document.createElement('button')
+        btn.setAttribute("data-trainer-id", trainer.id)
+        btn.innerText = "Add Pokemon"
+        btn.addEventListener("click", postPokemon)
+
+        let ul = document.createElement('ul')
+        let pokemons = trainer.pokemons
+        pokemons.forEach(pokemon => renderPokemons(pokemon));
+        function renderPokemons(pokemon) {
+            let li = document.createElement('li');
+            li.innerText = pokemon.species + "->" + pokemon.nickname
+
+            let releaseBtn = document.createElement('button')
+            releaseBtn.setAttribute('class', "release")
+            releaseBtn.setAttribute("data-pokemon-id", pokemon.id)
+            releaseBtn.innerText = "Release"
+            releaseBtn.addEventListener("click", (event))
+            li.appendChild(releaseBtn)
+
+            ul.appendChild(li)
+        }
+        div.append(p, btn, ul)
+
+        trainerContainer.appendChild(div);
+}
+
 
